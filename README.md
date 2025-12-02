@@ -98,13 +98,25 @@ For information about these variables see: https://llamastack.github.io/v0.2.18/
 
 ### Configuring RAG
 
-The `run.yaml` file that is included in the container image has a RAG tool enabled. In order for this tool to have the necessary reference content, you need to run:
+This Llama Stack configuration includes **dual FAISS vector databases** for RAG:
 
-```
+1. **Static Database** - RHDH Product Documentation (read-only)
+   - Vector DB ID: `rhdh-product-docs-1_8`
+   - Pre-populated via `make get-rag` command
+   - Contains official RHDH 1.8 documentation
+
+2. **Dynamic Database** - User-Uploaded Content (runtime-editable)
+   - Vector DB ID: `dynamic-knowledge-base`
+   - Supports insert/upsert/delete operations
+   - Managed via Lightspeed Core API endpoints
+
+To fetch the static RHDH documentation database:
+
+```bash
 make get-rag
 ```
 
-This will fetch the necessary reference content and add it to your local project directory.
+This will download the embeddings model and pre-indexed RHDH documentation to your local project directory.
 
 ### Configuring Question Validation
 
@@ -115,8 +127,13 @@ By default this Llama Stack has a Safety Shield for question validation enabled.
 
 ### Running Locally
 
-```
-podman run -it -p 8321:8321 --env-file ./env/values.env -v ./embeddings_model:/app-root/embeddings_model:Z -v ./vector_db/rhdh_product_docs:/app-root/vector_db/rhdh_product_docs:Z quay.io/redhat-ai-dev/llama-stack:latest
+```bash
+podman run -it -p 8321:8321 \
+  --env-file ./env/values.env \
+  -v ./embeddings_model:/app-root/embeddings_model:Z \
+  -v ./vector_db/rhdh_product_docs:/app-root/vector_db/rhdh_product_docs:Z \
+  -v ./dynamic_rag:/app-root/.llama:Z \
+  quay.io/redhat-ai-dev/llama-stack:latest
 ```
 
 Latest Lightspeed Core developer image:
