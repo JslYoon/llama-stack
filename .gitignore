@@ -1,4 +1,5 @@
 .llama
+dynamic_rag
 
 # Don't track the RAG data and model from the rag-content image
 embeddings_model

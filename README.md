@@ -32,6 +32,19 @@ quay.io/redhat-ai-dev/llama-stack:latest
 
 ## Usage
 
+### Initial Setup
+
+After cloning the repository, run:
+
+```bash
+make setup
+make get-rag
+```
+
+This will:
+- Create the `dynamic_rag` directory for persistent storage (runtime data, uploaded documents)
+- Download the RHDH documentation embeddings and model
+
 > [!IMPORTANT]
 > The default Llama Stack configuration file that is baked into the built image contains tools. Ensure your provided inference server has tool calling **enabled**.
 
@@ -164,6 +177,7 @@ To deploy on a cluster see [DEPLOYMENT.md](./docs/DEPLOYMENT.md).
 
 | Command | Description |
 | ---- | ----|
+| **setup** | Initialize project directories (creates `dynamic_rag` for persistent storage) |
 | **get-rag** | Gets the RAG data and the embeddings model from the rag-content image registry to your local project directory |
 | **update-question-validation** | Updates the question validation content in `providers.d` |
 | **validate-prompt-templates** | Validates prompt values in run.yaml. **Requires Python >= 3.11** |

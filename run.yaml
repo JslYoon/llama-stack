@@ -244,7 +244,3 @@ vector_dbs:
   embedding_model: sentence-transformers/all-mpnet-base-v2
   provider_id: rhdh-docs
   vector_db_id: rhdh-product-docs-1_8
-- embedding_dimension: 768
-  embedding_model: sentence-transformers/all-mpnet-base-v2
-  provider_id: faiss-dynamic
-  vector_db_id: dynamic-knowledge-base

@@ -20,6 +20,10 @@ PIP := $(VENV)/bin/pip3
 
 default: help
 
+setup: ## Initialize project directories
+	@mkdir -p dynamic_rag
+	@echo "Created dynamic_rag directory for persistent storage"
+
 get-rag: ## Download a copy of the RAG embedding model and vector database
 	podman create --replace --name tmp-rag-container $(RAG_CONTENT_IMAGE) true
 	rm -rf vector_db embeddings_model
