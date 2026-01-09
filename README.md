@@ -144,12 +144,13 @@ By default this Llama Stack has a Safety Shield for question validation enabled.
 ### Running Locally
 
 ```bash
-podman run -it -p 8321:8321 \
-  --env-file ./env/values.env \
-  -v ./embeddings_model:/app-root/embeddings_model:Z \
-  -v ./vector_db/rhdh_product_docs:/app-root/vector_db/rhdh_product_docs:Z \
-  -v ./dynamic_rag:/app-root/.llama:Z \
-  quay.io/redhat-ai-dev/llama-stack:latest
+  podman run -it -p 8321:8321 \
+    --env-file ./env/values.env \
+    -v ./embeddings_model:/app-root/embeddings_model:Z \
+    -v ./vector_db/rhdh_product_docs:/app-root/vector_db/rhdh_product_docs:Z \
+    -v ./dynamic_rag:/app-root/.llama:Z \
+    -v ./run.yaml:/app-root/run.yaml:Z \
+    quay.io/redhat-ai-dev/llama-stack:latest
 ```
 
 Or if using the host network:

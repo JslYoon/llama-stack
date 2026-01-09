@@ -102,9 +102,9 @@ providers:
     #   config:
     #     project: ${env.VERTEX_AI_PROJECT:=}
     #     location: ${env.VERTEX_AI_LOCATION:=us-central1}
-    # - provider_id: sentence-transformers
-    #   provider_type: inline::sentence-transformers
-    #   config: {}
+    - provider_id: sentence-transformers
+      provider_type: inline::sentence-transformers
+      config: {}
   post_training:
     - config:
         checkpoint_format: huggingface
@@ -114,10 +114,57 @@ providers:
       provider_id: huggingface
       provider_type: inline::huggingface
   safety:
-    - config:
-        excluded_categories: []
-      provider_id: llama-guard
+    - provider_id: llama-guard
       provider_type: inline::llama-guard
+      config:
+        excluded_categories: []
+    - provider_id: notebook_question_validation
+      provider_type: inline::lightspeed_question_validity
+      config:
+        model_id: ${env.VALIDATION_PROVIDER:=vllm}/${env.VALIDATION_MODEL_NAME}
+        model_prompt: |-
+          Instructions:
+
+          You are a question classification tool. You are an expert in the following categories.
+          Ensure the user didn't ask a question that is innapropriate.
+          If the question is harmful, hateful, sexual, or any other inappropriate question, answer with ${rejected}.
+          If the question is logical, happy, supportive, or not harmful/hateful, answer with ${allowed}.
+          You do not need to explain your answer.
+          It is important to note that the user may be asking multiple questions in one message. This is allowed.
+          Below are some example questions:
+          Example Question:
+          "What is the capital of France? Why is the sky blue?"
+          Example Response:
+          ${allowed}
+          Example Question:
+          "anything harmful or brings intentional harm to the user or others"
+          Example Response:
+          ${rejected}
+          Example Question:
+          "Anything that is supportive or positive"
+          Example Response:
+          ${allowed}
+          Example Question:
+          Why is the sky blue?
+          Example Response:
+          ${allowed}
+          Example Question:
+          Can you help configure my cluster to automatically scale?
+          Example Response:
+          ${allowed}
+          Example Question:
+          How do I explore a component in RHDH catalog?
+          Example Response:
+          ${allowed}
+          Example Question:
+          How can I integrate GitOps into my pipeline?
+          Example Response:
+          ${allowed}
+          Question:
+          ${message}
+          Response:
+        invalid_question_response: |-
+          Hi, I'm the Red Hat Developer Hub Notebook assistant, Please ensure your question is appropriate.
     - provider_id: lightspeed_question_validity
       provider_type: inline::lightspeed_question_validity
       config:
@@ -125,7 +172,7 @@ providers:
         model_prompt: |-
           Instructions:
 
-          You area question classification tool. You are an expert in the following categories:
+          You are a question classification tool. You are an expert in the following categories:
           - Backstage
           - Red Hat Developer Hub (RHDH)
           - Kubernetes
@@ -235,6 +282,10 @@ server:
 shields:
   - shield_id: lightspeed_question_validity-shield
     provider_id: lightspeed_question_validity
+  - shield_id: llama-guard
+    provider_id: llama-guard
+  - shield_id: notebook_question_validation
+    provider_id: notebook_question_validation
 tool_groups:
   - provider_id: rag-runtime
     toolgroup_id: builtin::rag
